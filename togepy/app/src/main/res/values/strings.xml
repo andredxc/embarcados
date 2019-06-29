@@ -1,8 +1,5 @@
 <resources>
     <string name="app_name">Togepy</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
 
     <string name="action_settings">Settings</string>
     <string name="drawer_metronome">Metronome</string>
@@ -14,4 +11,7 @@
     <string name="timeMinusFive">-5</string>
     <string name="timePlusFive">+5</string>
     <string name="stop_metronome">STOP</string>
+    <string name="title_metronome">Metrônomo</string>
+    <string name="title_tuner">Afinador</string>
+    <string name="title_activity_test">TestActivity</string>
 </resources>

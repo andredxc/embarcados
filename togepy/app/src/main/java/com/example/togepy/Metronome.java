@@ -41,7 +41,7 @@ public class Metronome {
             _currentNote = 1;
             _mediaPlayer = MediaPlayer.create(context, R.raw.low_seiko_sq50);
             _accentMediaPlayer = MediaPlayer.create(context, R.raw.high_seiko_sq50);
-            _tickPeriodMs =  (long) ((60.0/(float) getBpm())*1000.0)*_timeSignature1/_timeSignature2;
+            _tickPeriodMs = (long) ((60.0/(float) getBpm())*1000.0)*_timeSignature1/_timeSignature2;
             _timer = new Timer();
             Log.v("Metronome", "Starting metronome at " + getBpm() + " BPM ( " +
                     _tickPeriodMs + " miliseconds per beat)");

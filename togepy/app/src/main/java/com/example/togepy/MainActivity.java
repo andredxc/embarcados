@@ -1,5 +1,6 @@
 package com.example.togepy;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -23,14 +24,14 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_home);
+                case R.id.navigation_metronome:
+                    Log.e("andre", "Metronome");
                     return true;
-                case R.id.navigation_dashboard:
-                    mTextMessage.setText(R.string.title_dashboard);
-                    return true;
-                case R.id.navigation_notifications:
-                    mTextMessage.setText(R.string.title_notifications);
+                case R.id.navigation_tuner:
+                    Log.e("andre", "Tuner");
+                    startActivity(new Intent(MainActivity.this, Test_activity.class));
+                    overridePendingTransition(R.anim.fadein,
+                            R.anim.fadeout);
                     return true;
             }
             return false;
