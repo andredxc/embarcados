@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 case R.id.navigation_tuner:
                     Log.e("andre", "Tuner");
-                    startActivity(new Intent(MainActivity.this, Test_activity.class));
+                    startActivity(new Intent(MainActivity.this, Tuner.class));
                     overridePendingTransition(R.anim.fadein,
                             R.anim.fadeout);
                     return true;
