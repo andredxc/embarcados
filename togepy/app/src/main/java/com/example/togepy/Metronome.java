@@ -12,6 +12,7 @@ import java.util.TimerTask;
 public class Metronome {
 
     private final int MAX_BPM = 200;
+    private final int MAX_TS = 20;
     private int _timeSignature1, _timeSignature2;
     private int _bpm, _accentNote, _currentNote;
     private boolean _isRunning;
@@ -20,6 +21,7 @@ public class Metronome {
     private Context _currentContext;
     private MediaPlayer _mediaPlayer, _accentMediaPlayer;
     private TextView _bpmTextView = null;
+    private TextView _timeSignatureTopTextView = null;
 
     public Metronome(){
 
@@ -41,7 +43,7 @@ public class Metronome {
             _currentNote = 1;
             _mediaPlayer = MediaPlayer.create(context, R.raw.low_seiko_sq50);
             _accentMediaPlayer = MediaPlayer.create(context, R.raw.high_seiko_sq50);
-            _tickPeriodMs = (long) ((60.0/(float) getBpm())*1000.0)*_timeSignature1/_timeSignature2;
+            _tickPeriodMs =  (long) ((60.0/(float) getBpm())*1000.0);
             _timer = new Timer();
             Log.v("Metronome", "Starting metronome at " + getBpm() + " BPM ( " +
                     _tickPeriodMs + " miliseconds per beat)");
@@ -103,6 +105,14 @@ public class Metronome {
             _bpmTextView.setText(Integer.toString(getBpm()) + " BPM");
         }
     }
+    private void refreshTimeSignatureTopTextView(){
+
+        if(_timeSignatureTopTextView != null){
+            _timeSignatureTopTextView.setText(Integer.toString(getTimeSignature1()));
+            Log.v("Time Signature set", "TS = " + _timeSignature1);
+        }
+        Log.v("Time Signature set", "TS = " + _timeSignature1);
+    }
 
     private float calculatePrecision(long currentPeriodMs){
 
@@ -115,6 +125,12 @@ public class Metronome {
         refreshBpmTextView();
     }
 
+    public void setTimeSignatureTopTextView(TextView textView){
+
+        _timeSignatureTopTextView = textView;
+        refreshTimeSignatureTopTextView();
+    }
+
     public void setBpm(int bpm){
 
         if(bpm <= MAX_BPM){
@@ -124,6 +140,18 @@ public class Metronome {
         else{
             Log.v("Metronome", "BPM = " + bpm + " not allowed.");
         }
+    }
+
+    public void setTimeSignatureTop(int ts){
+
+        if(ts < MAX_TS){
+            _timeSignature1 = ts;
+
+        }
+        else{
+            Log.v("Time Signature", "TS = " + _timeSignature1 + " not allowed.");
+        }
+        refreshTimeSignatureTopTextView();
     }
 
     public void increaseBpm(int value){
@@ -152,7 +180,15 @@ public class Metronome {
         }
     }
 
-    public void setTimeSignature1(int value){ _timeSignature1 = value; }
+    public void setTimeSignature1(int value){
+        _timeSignature1 = value;
+        Log.v("Time Signature", "TS = " + _timeSignature1);
+        if(_isRunning){
+            stop();
+            start(_currentContext);
+        }
+        refreshTimeSignatureTopTextView();
+    }
 
     public void setTimeSignature2(int value){ _timeSignature2 = value; }
 
