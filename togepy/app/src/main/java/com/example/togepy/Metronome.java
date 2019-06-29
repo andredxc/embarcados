@@ -1,5 +1,6 @@
-package andre.metronome;
+package com.example.togepy;
 
+import com.example.togepy.R;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.util.Log;
@@ -42,7 +43,8 @@ public class Metronome {
             _accentMediaPlayer = MediaPlayer.create(context, R.raw.high_seiko_sq50);
             _tickPeriodMs =  (long) ((60.0/(float) getBpm())*1000.0)*4/_timeSignature2;
             _timer = new Timer();
-            Log.v("Metronome", "Starting metronome at " + getBpm() + " BPM ( " + _tickPeriodMs + " miliseconds per beat)");
+            Log.v("Metronome", "Starting metronome at " + getBpm() + " BPM ( " +
+                    _tickPeriodMs + " miliseconds per beat)");
 
             _timer.schedule(new TimerTask() {
                 @Override
@@ -71,7 +73,8 @@ public class Metronome {
             //Plays accent sound
             try{
                 _accentMediaPlayer.start();
-                Log.v("Metronome", "Time since last tick is " + currentPeriodMs + "ms (" + getBpm() + " BPM)");
+                Log.v("Metronome", "Time since last tick is " + currentPeriodMs + "ms ("
+                        + getBpm() + " BPM)");
             }catch(Exception e){
                 Log.e("Metronome", e.toString());
             }
@@ -80,7 +83,8 @@ public class Metronome {
             //Plays regular sound
             try{
                 _mediaPlayer.start();
-                Log.v("Metronome", "Time since last tick is " + currentPeriodMs + "ms (" + getBpm() + " BPM)");
+                Log.v("Metronome", "Time since last tick is " + currentPeriodMs + "ms ("
+                        + getBpm() + " BPM)");
             }catch(Exception e) {
                 Log.e("Metronome", e.toString());
             }
