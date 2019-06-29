@@ -18,6 +18,90 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/bpmTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:text="BPM"
+        android:textSize="35px"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintVertical_bias="0.498"
+        android:id="@+id/linearLayout">
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/timeMinusOne"
+                android:layout_width="90px"
+                android:layout_height="wrap_content"
+                android:onClick="changeMetronomeTime"
+                android:textStyle="bold"
+                android:text="@string/timeMinusOne" />
+
+            <Button
+                android:id="@+id/timeMinusFive"
+                android:layout_width="90px"
+                android:layout_height="wrap_content"
+                android:onClick="changeMetronomeTime"
+                android:textStyle="bold"
+                android:text="@string/timeMinusFive" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/activate_metronome"
+            android:layout_width="200px"
+            android:layout_height="120px"
+            android:layout_gravity="center"
+            android:onClick="activateMetronome"
+            android:text="@string/start_metronome"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/timePlusOne"
+                android:layout_width="90px"
+                android:layout_height="wrap_content"
+                android:onClick="changeMetronomeTime"
+                android:textStyle="bold"
+                android:text="@string/timePlusOne" />
+
+            <Button
+                android:id="@+id/timePlusFive"
+                android:layout_width="90px"
+                android:layout_height="wrap_content"
+                android:onClick="changeMetronomeTime"
+                android:textStyle="bold"
+                android:text="@string/timePlusFive" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
         android:layout_width="0dp"
