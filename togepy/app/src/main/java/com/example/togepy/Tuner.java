@@ -23,6 +23,8 @@ import be.tarsos.dsp.pitch.PitchProcessor;
 
 
 public class Tuner extends AppCompatActivity {
+    private float pitchFreq = -1;
+    private String pitchNote = "";
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -52,15 +54,22 @@ public class Tuner extends AppCompatActivity {
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         navView.setSelectedItemId(R.id.navigation_tuner);
+    }
 
-//        Log.v("PitchDetector", "CHECKING FOR PERMISSION");
-//        if(ContextCompat.checkSelfPermission(Tuner.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED){
-            Log.v("PitchDetector", "ASKING FOR PERMISSION");
-            ActivityCompat.requestPermissions(Tuner.this, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
-//        }
-//        else{
-//            Log.v("PitchDetector", "ALREADY HAD PERMISSION");
-//        }
+    @Override
+    protected void onStart(){
+        super.onStart();
+        Log.v("PitchDetector", "ACTIVITY STARTED");
+
+        Log.v("PitchDetector", "ASKING FOR PERMISSION");
+        ActivityCompat.requestPermissions(Tuner.this, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        Log.v("PitchDetector", "ACTIVITY PAUSED");
+
     }
 
     @Override
@@ -82,8 +91,6 @@ public class Tuner extends AppCompatActivity {
 
     protected void detectPitch() {
         Log.v("PitchDetector", "RUNNING");
-        TextView text = findViewById(R.id.bpmTextView);
-        text.setText("agora vai");
 
         PitchDetectionHandler pdh = new PitchDetectionHandler() {
             @Override
@@ -92,8 +99,8 @@ public class Tuner extends AppCompatActivity {
                 runOnUiThread(new Runnable(){
                     @Override
                     public void run() {
-                        TextView text = findViewById(R.id.bpmTextView);
-                        text.setText("" + pitchInHz);
+                        Tuner.this.pitchFreq = pitchInHz;
+                        Tuner.this.updateDisplay();
                     }
                 });
             }
@@ -103,5 +110,19 @@ public class Tuner extends AppCompatActivity {
         adp.addAudioProcessor(new PitchProcessor(PitchProcessor.PitchEstimationAlgorithm.YIN, 44100, 2040, pdh));
         Thread pitchThread = new Thread(adp, "PitchDetector");
         pitchThread.start();
+    }
+
+    protected void updateDisplay(){
+        if(pitchFreq >= 290 && pitchFreq <= 310){
+            this.pitchNote = "E";
+        }
+        else{
+            this.pitchNote = "?";
+        }
+
+        TextView freqText = findViewById(R.id.pitchFreq);
+        freqText.setText("" + this.pitchFreq);
+        TextView noteText = findViewById(R.id.pitchNote);
+        noteText.setText("" + this.pitchNote);
     }
 }

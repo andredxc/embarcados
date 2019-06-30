@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
             mButton.setText(R.string.start_metronome);
         }
         else{
-            _metronome.setBpmTextView((TextView) findViewById(R.id.bpmTextView));
+            _metronome.setBpmTextView((TextView) findViewById(R.id.pitchFreq));
             _metronome.setTimeSignatureTopTextView((TextView) findViewById(R.id.timeSignatureTopTextView));
             _metronome.start(this);
             Button mButton = (Button)findViewById(R.id.activate_metronome);

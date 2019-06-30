@@ -19,7 +19,7 @@
 
 
         <TextView
-            android:id="@+id/bpmTextView"
+            android:id="@+id/pitchFreq"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
