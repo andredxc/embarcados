@@ -16,6 +16,8 @@ import androidx.core.app.ActivityCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.Locale;
+
 import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.io.android.AudioDispatcherFactory;
@@ -126,14 +128,31 @@ public class Tuner extends AppCompatActivity {
         String[] notes = new String[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
         this.noteName = notes[pitchMidi%12];
 
-        if(this.pitchFreq == -1){
+        double noteFreq = PitchConverter.midiKeyToHertz(pitchMidi);
+        double offset = noteFreq - this.pitchFreq;
+
+        // Create strings
+        String freqStr, offsetStr;
+        if (this.pitchFreq == -1){
+            // Too quiet
+            freqStr = "";
+            offsetStr = "";
             this.noteName = "Too quiet";
         }
+        else{
+            freqStr = String.format(Locale.getDefault(), "%.2f Hz", this.pitchFreq);
+            offsetStr = String.format(Locale.getDefault(),"%.2f", offset);
+        }
 
+        // Update frequency text
         TextView freqText = findViewById(R.id.pitchFreq);
-        freqText.setText(this.pitchFreq + " Hz");
+        freqText.setText(freqStr);
+        // Update note text
         TextView noteText = findViewById(R.id.pitchNote);
         noteText.setText(this.noteName);
+        // Update offset text
+        TextView offsetText = findViewById(R.id.pitchOffset);
+        offsetText.setText(offsetStr);
     }
 
     public void startTuner(View view){

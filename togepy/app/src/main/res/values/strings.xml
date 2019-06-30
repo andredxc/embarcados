@@ -23,4 +23,5 @@
     <string name="tunerFrequencyDefaultText">Frequency</string>
     <string name="tunerStartButtonText">START TUNING</string>
     <string name="currentStringDefaultText">Current string</string>
+    <string name="tunerOffsetDefaultText">Offset</string>
 </resources>

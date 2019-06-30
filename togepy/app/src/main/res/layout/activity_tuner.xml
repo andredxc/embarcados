@@ -46,6 +46,17 @@
             app:layout_constraintBottom_toBottomOf="parent" />
 
         <TextView
+            android:id="@+id/pitchOffset"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:text="@string/tunerOffsetDefaultText"
+            android:textSize="50sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <TextView
             android:id="@+id/pitchFreq"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
