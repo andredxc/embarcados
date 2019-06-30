@@ -1,6 +1,7 @@
 package com.example.togepy;
 
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -13,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
 
 public class MainActivity extends AppCompatActivity {
     private TextView mTextMessage;
@@ -47,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         _metronome = new Metronome();
+
+        //Sets volume buttons to adjust media volume
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
     }
 
     //Handles "start metronome" XML button
