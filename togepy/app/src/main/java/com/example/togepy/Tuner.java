@@ -6,6 +6,8 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -25,6 +27,8 @@ import be.tarsos.dsp.util.PitchConverter;
 
 public class Tuner extends AppCompatActivity {
     private float pitchFreq = -1;
+    private String noteName;
+    private int currentStringNum = 6;
     AudioDispatcher audioDispatcher;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -60,18 +64,18 @@ public class Tuner extends AppCompatActivity {
     @Override
     protected void onStart(){
         super.onStart();
-        Log.v("PitchDetector", "ACTIVITY STARTED");
+        Log.v("Tuner", "ACTIVITY STARTED");
 
-        Log.v("PitchDetector", "ASKING FOR PERMISSION");
+        Log.v("Tuner", "ASKING FOR PERMISSION");
         ActivityCompat.requestPermissions(Tuner.this, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
     }
 
     @Override
     protected void onPause(){
         super.onPause();
-        Log.v("PitchDetector", "ACTIVITY PAUSED");
+        Log.v("Tuner", "ACTIVITY PAUSED");
         if(this.audioDispatcher != null) {
-            Log.v("PitchDetector", "STOPPING DISPATCHER");
+            Log.v("Tuner", "STOPPING DISPATCHER");
             this.audioDispatcher.stop();
             this.audioDispatcher = null;
         }
@@ -83,20 +87,20 @@ public class Tuner extends AppCompatActivity {
         switch(requestCode){
             case 1:
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    Log.v("PitchDetector", "PERMISSION GRANTED");
+                    Log.v("Tuner", "PERMISSION GRANTED");
                     this.detectPitch();
                 }
                 else{
-                    Log.v("PitchDetector", "PERMISSION DENIED");
+                    Log.v("Tuner", "PERMISSION DENIED");
                 }
                 return;
             default:
-                Log.v("PitchDetector", "Invalid permission request code!");
+                Log.v("Tuner", "Invalid permission request code!");
         }
     }
 
     protected void detectPitch() {
-        Log.v("PitchDetector", "RUNNING");
+        Log.v("Tuner", "RUNNING");
 
         PitchDetectionHandler pitchDetectionHandler = new PitchDetectionHandler() {
             @Override
@@ -120,15 +124,59 @@ public class Tuner extends AppCompatActivity {
     protected void updateDisplay(){
         int pitchMidi = PitchConverter.hertzToMidiKey(Double.valueOf(this.pitchFreq));
         String[] notes = new String[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-        String noteName = notes[pitchMidi%12];
+        this.noteName = notes[pitchMidi%12];
 
         if(this.pitchFreq == -1){
-            noteName = "Too quiet";
+            this.noteName = "Too quiet";
         }
 
         TextView freqText = findViewById(R.id.pitchFreq);
-        freqText.setText("" + this.pitchFreq);
+        freqText.setText(this.pitchFreq + " Hz");
         TextView noteText = findViewById(R.id.pitchNote);
-        noteText.setText("" + noteName);
+        noteText.setText(this.noteName);
     }
+
+    public void startTuner(View view){
+        Button startTuningButton = findViewById(R.id.tunerStartButton);
+        startTuningButton.setVisibility(View.INVISIBLE);
+        TextView currentStringText = findViewById(R.id.currentString);
+        currentStringText.setVisibility(View.VISIBLE);
+
+        new Thread(new Runnable(){
+            @Override
+            public void run(){
+                Log.v("Tuner", "STARTING TUNER");
+
+                String[] tunerGoals = {"E", "B", "G", "D", "A", "E"};   //From string 1 to string 6
+                //Goes through all 6 strings starting from string 6 (lowest string)
+                for(Tuner.this.currentStringNum = 6; Tuner.this.currentStringNum >= 1; Tuner.this.currentStringNum--){
+                    //Updates the text on screen
+                    runOnUiThread(new Runnable(){
+                        @Override
+                        public void run() {
+                            TextView currentStringText = findViewById(R.id.currentString);
+                            currentStringText.setText("String " + Tuner.this.currentStringNum);
+                        }
+                    });
+                    while(Tuner.this.noteName != tunerGoals[Tuner.this.currentStringNum-1]){
+                        //Do nothing (waits for the right note to proceed)
+                    }
+                }
+
+                runOnUiThread(new Runnable(){
+                    @Override
+                    public void run() {
+                        TextView currentStringText = findViewById(R.id.currentString);
+                        currentStringText.setText("Done tuning!");
+                        Button startTuningButton = findViewById(R.id.tunerStartButton);
+                        startTuningButton.setVisibility(View.VISIBLE);
+                    }
+                });
+
+                Log.v("Tuner", "DONE TUNING");
+            }
+        }, "Tuner").start();
+    }
+
+
 }

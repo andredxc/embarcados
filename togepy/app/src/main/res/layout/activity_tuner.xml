@@ -21,18 +21,18 @@
         app:menu="@menu/bottom_nav_menu" />
 
     <LinearLayout
+        android:id="@+id/layoutNote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/nav_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" >
+        app:layout_constraintStart_toStartOf="parent">
 
         <TextView
             android:id="@+id/pitchNote"
@@ -40,8 +40,8 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="8dp"
             android:gravity="center"
-            android:text="note"
-            android:textSize="70dp"
+            android:text="@string/tunerNoteDefaultText"
+            android:textSize="50sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent" />
 
@@ -51,11 +51,51 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="8dp"
             android:gravity="center"
-            android:text="freq"
-            android:textSize="70dp"
+            android:text="@string/tunerFrequencyDefaultText"
+            android:textSize="40sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent" />
 
     </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/layoutTuner"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/layoutNote"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
+
+        <TextView
+            android:id="@+id/currentString"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:text="@string/currentStringDefaultText"
+            android:textSize="35sp"
+            android:gravity="center"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/tunerStartButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/tunerStartButtonText"
+            android:textSize="20sp"
+            tools:text="@string/tunerStartButtonText"
+            android:onClick="startTuner"/>
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

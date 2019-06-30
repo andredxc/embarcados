@@ -18,4 +18,9 @@
     <string name="title_tuner">Afinador</string>
     <string name="title_activity_test">TestActivity</string>
     <string name="startingTimeSignature">+</string>
+
+    <string name="tunerNoteDefaultText">Note</string>
+    <string name="tunerFrequencyDefaultText">Frequency</string>
+    <string name="tunerStartButtonText">START TUNING</string>
+    <string name="currentStringDefaultText">Current string</string>
 </resources>
