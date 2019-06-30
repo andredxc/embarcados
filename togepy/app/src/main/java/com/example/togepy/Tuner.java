@@ -20,9 +20,11 @@ import be.tarsos.dsp.io.android.AudioDispatcherFactory;
 import be.tarsos.dsp.pitch.PitchDetectionHandler;
 import be.tarsos.dsp.pitch.PitchDetectionResult;
 import be.tarsos.dsp.pitch.PitchProcessor;
+import be.tarsos.dsp.util.PitchConverter;
 
 
 public class Tuner extends AppCompatActivity {
+    private float noteTolerance = 5;
     private float pitchFreq = -1;
     private String pitchNote = "";
 
@@ -113,16 +115,17 @@ public class Tuner extends AppCompatActivity {
     }
 
     protected void updateDisplay(){
-        if(pitchFreq >= 290 && pitchFreq <= 310){
-            this.pitchNote = "E";
-        }
-        else{
-            this.pitchNote = "?";
+        int pitchMidi = PitchConverter.hertzToMidiKey(Double.valueOf(this.pitchFreq));
+        String[] notes = new String[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+        String noteName = notes[pitchMidi%12];
+
+        if(this.pitchFreq == -1){
+            noteName = "Too quiet";
         }
 
         TextView freqText = findViewById(R.id.pitchFreq);
         freqText.setText("" + this.pitchFreq);
         TextView noteText = findViewById(R.id.pitchNote);
-        noteText.setText("" + this.pitchNote);
+        noteText.setText("" + noteName);
     }
 }
