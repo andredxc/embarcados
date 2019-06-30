@@ -24,9 +24,8 @@ import be.tarsos.dsp.util.PitchConverter;
 
 
 public class Tuner extends AppCompatActivity {
-    private float noteTolerance = 5;
     private float pitchFreq = -1;
-    private String pitchNote = "";
+    AudioDispatcher audioDispatcher;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -71,6 +70,11 @@ public class Tuner extends AppCompatActivity {
     protected void onPause(){
         super.onPause();
         Log.v("PitchDetector", "ACTIVITY PAUSED");
+        if(this.audioDispatcher != null) {
+            Log.v("PitchDetector", "STOPPING DISPATCHER");
+            this.audioDispatcher.stop();
+            this.audioDispatcher = null;
+        }
 
     }
 
@@ -94,7 +98,7 @@ public class Tuner extends AppCompatActivity {
     protected void detectPitch() {
         Log.v("PitchDetector", "RUNNING");
 
-        PitchDetectionHandler pdh = new PitchDetectionHandler() {
+        PitchDetectionHandler pitchDetectionHandler = new PitchDetectionHandler() {
             @Override
             public void handlePitch(PitchDetectionResult result, AudioEvent e) {
                 final float pitchInHz = result.getPitch();
@@ -108,10 +112,9 @@ public class Tuner extends AppCompatActivity {
             }
         };
 
-        AudioDispatcher adp = AudioDispatcherFactory.fromDefaultMicrophone(22050, 2048, 0);
-        adp.addAudioProcessor(new PitchProcessor(PitchProcessor.PitchEstimationAlgorithm.YIN, 44100, 2040, pdh));
-        Thread pitchThread = new Thread(adp, "PitchDetector");
-        pitchThread.start();
+        this.audioDispatcher = AudioDispatcherFactory.fromDefaultMicrophone(22050, 2048, 0);
+        audioDispatcher.addAudioProcessor(new PitchProcessor(PitchProcessor.PitchEstimationAlgorithm.YIN, 44100, 2048, pitchDetectionHandler));
+        new Thread(audioDispatcher, "AudioDispatcher").start();
     }
 
     protected void updateDisplay(){
