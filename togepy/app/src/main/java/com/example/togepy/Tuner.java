@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -28,10 +29,13 @@ import be.tarsos.dsp.util.PitchConverter;
 
 
 public class Tuner extends AppCompatActivity {
+
     private float pitchFreq = -1;
     private String noteName;
     private int currentStringNum = 6;
+    private ProgressBar pitchBar = null;
     AudioDispatcher audioDispatcher;
+    final int PITCH_BAR_MAX = 200;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -58,9 +62,14 @@ public class Tuner extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tuner);
 
+        // Set bottom navigation view
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         navView.setSelectedItemId(R.id.navigation_tuner);
+
+        // Set pitch bar
+        pitchBar = findViewById(R.id.pitchBar);
+        pitchBar.setMax(PITCH_BAR_MAX);
     }
 
     @Override
@@ -129,7 +138,12 @@ public class Tuner extends AppCompatActivity {
         this.noteName = notes[pitchMidi%12];
 
         double noteFreq = PitchConverter.midiKeyToHertz(pitchMidi);
-        double offset = noteFreq - this.pitchFreq;
+        double noteCent = PitchConverter.hertzToAbsoluteCent(noteFreq);
+        double pitchCent = 0;
+        if(this.pitchFreq > 0){
+            pitchCent = PitchConverter.hertzToAbsoluteCent(this.pitchFreq);
+        }
+        double offset = noteCent - pitchCent;
 
         // Create strings
         String freqStr, offsetStr;
@@ -153,6 +167,11 @@ public class Tuner extends AppCompatActivity {
         // Update offset text
         TextView offsetText = findViewById(R.id.pitchOffset);
         offsetText.setText(offsetStr);
+
+        // Update pitch progress bar
+        // -50 < offset < 50
+        int progress = (int)(((50.0+offset)/100.0)*(float) PITCH_BAR_MAX);
+        pitchBar.setProgress(progress);
     }
 
     public void startTuner(View view){
@@ -196,6 +215,4 @@ public class Tuner extends AppCompatActivity {
             }
         }, "Tuner").start();
     }
-
-
 }
