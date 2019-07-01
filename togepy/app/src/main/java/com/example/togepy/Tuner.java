@@ -17,6 +17,8 @@ import androidx.core.app.ActivityCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.w3c.dom.Text;
+
 import java.util.Locale;
 
 import be.tarsos.dsp.AudioDispatcher;
@@ -33,6 +35,7 @@ public class Tuner extends AppCompatActivity {
     private float pitchFreq = -1;
     private String noteName;
     private int currentStringNum = 6;
+    private float tunerFreqOffset;  //Difference between the frequency captured by the mic and the tuner goal
     private ProgressBar pitchBar = null;
     AudioDispatcher audioDispatcher;
     final int PITCH_BAR_MAX = 200;
@@ -172,6 +175,11 @@ public class Tuner extends AppCompatActivity {
         // -50 < offset < 50
         int progress = (int)(((50.0+offset)/100.0)*(float) PITCH_BAR_MAX);
         pitchBar.setProgress(progress);
+
+        //Update tuner bar
+        ProgressBar tunerBar = findViewById(R.id.tunerBar);
+        tunerBar.setProgress((int)this.tunerFreqOffset + 100);
+
     }
 
     public void startTuner(View view){
@@ -179,13 +187,20 @@ public class Tuner extends AppCompatActivity {
         startTuningButton.setVisibility(View.INVISIBLE);
         TextView currentStringText = findViewById(R.id.currentString);
         currentStringText.setVisibility(View.VISIBLE);
+        ProgressBar tunerBar = findViewById(R.id.tunerBar);
+        tunerBar.setVisibility(View.VISIBLE);
+        TextView tunerLowText = findViewById(R.id.tunerLowText);
+        tunerLowText.setVisibility(View.VISIBLE);
+        TextView tunerHighText = findViewById(R.id.tunerHighText);
+        tunerHighText.setVisibility(View.VISIBLE);
 
         new Thread(new Runnable(){
             @Override
             public void run(){
                 Log.v("Tuner", "STARTING TUNER");
 
-                String[] tunerGoals = {"E", "B", "G", "D", "A", "E"};   //From string 1 to string 6
+                String[] tunerNoteGoals = {"E", "B", "G", "D", "A", "E"};   //From string 1 to string 6
+                float[] tunerFreqGoals = {660, 494 ,392, 293, 219 ,164};
                 //Goes through all 6 strings starting from string 6 (lowest string)
                 for(Tuner.this.currentStringNum = 6; Tuner.this.currentStringNum >= 1; Tuner.this.currentStringNum--){
                     //Updates the text on screen
@@ -196,8 +211,8 @@ public class Tuner extends AppCompatActivity {
                             currentStringText.setText("String " + Tuner.this.currentStringNum);
                         }
                     });
-                    while(Tuner.this.noteName != tunerGoals[Tuner.this.currentStringNum-1]){
-                        //Do nothing (waits for the right note to proceed)
+                    while(Tuner.this.noteName != tunerNoteGoals[Tuner.this.currentStringNum-1]){
+                        Tuner.this.tunerFreqOffset = Tuner.this.pitchFreq - tunerFreqGoals[Tuner.this.currentStringNum-1];
                     }
                 }
 
@@ -208,6 +223,12 @@ public class Tuner extends AppCompatActivity {
                         currentStringText.setText("Done tuning!");
                         Button startTuningButton = findViewById(R.id.tunerStartButton);
                         startTuningButton.setVisibility(View.VISIBLE);
+                        ProgressBar tunerBar = findViewById(R.id.tunerBar);
+                        tunerBar.setVisibility(View.INVISIBLE);
+                        TextView tunerLowText = findViewById(R.id.tunerLowText);
+                        tunerLowText.setVisibility(View.INVISIBLE);
+                        TextView tunerHighText = findViewById(R.id.tunerHighText);
+                        tunerHighText.setVisibility(View.INVISIBLE);
                     }
                 });
 

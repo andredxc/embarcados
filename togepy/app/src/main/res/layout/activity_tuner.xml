@@ -95,14 +95,16 @@
             android:id="@+id/currentString"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="0dp"
+            android:gravity="center"
             android:text="@string/currentStringDefaultText"
             android:textSize="35sp"
-            android:gravity="center"
-            android:visibility="gone"/>
+            android:visibility="invisible" />
 
         <Button
             android:id="@+id/tunerStartButton"
@@ -113,6 +115,51 @@
             android:textSize="20sp"
             tools:text="@string/tunerStartButtonText"
             android:onClick="startTuner"/>
+
+        <ProgressBar
+            android:id="@+id/tunerBar"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/currentString"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:max="200"
+            android:progress="100"
+            android:layout_marginTop="25dp"
+            android:layout_marginRight="7dp"
+            android:layout_marginEnd="7dp"
+            android:visibility="invisible"/>
+
+        <TextView
+            android:id="@+id/tunerLowText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tunerBar"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="10dp"
+            android:text="@string/tunerLowText"
+            android:textSize="20sp"
+            android:visibility="invisible"/>
+
+        <TextView
+            android:id="@+id/tunerHighText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tunerBar"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="7dp"
+            android:layout_marginEnd="7dp"
+            android:text="@string/tunerHighText"
+            android:textSize="20sp"
+            android:visibility="invisible"/>
+
+
     </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

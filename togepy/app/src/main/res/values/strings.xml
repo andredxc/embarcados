@@ -14,8 +14,8 @@
     <string name="timeMinusFive">-5</string>
     <string name="timePlusFive">+5</string>
     <string name="stop_metronome">STOP</string>
-    <string name="title_metronome">Metrônomo</string>
-    <string name="title_tuner">Afinador</string>
+    <string name="title_metronome">Metronome</string>
+    <string name="title_tuner">Tuner</string>
     <string name="title_activity_test">TestActivity</string>
     <string name="startingTimeSignature">+</string>
 
@@ -24,4 +24,6 @@
     <string name="tunerStartButtonText">START TUNING</string>
     <string name="currentStringDefaultText">Current string</string>
     <string name="tunerOffsetDefaultText">Offset</string>
+    <string name="tunerLowText">low</string>
+    <string name="tunerHighText">high</string>
 </resources>
