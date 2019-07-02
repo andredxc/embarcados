@@ -32,13 +32,20 @@ import be.tarsos.dsp.util.PitchConverter;
 
 public class Tuner extends AppCompatActivity {
 
+    final int PITCH_BAR_MAX = 200;
+    final int PITCH_HISTORY_LENGTH = 20;
+    final int PITCH_LOWER_LIMIT = 10;
+
     private float pitchFreq = -1;
+    private float[] pitchHistory;
+    private int historyIndex = 0;
+    private float avgPitch = -1;
     private String noteName;
     private int currentStringNum = 6;
     private float tunerFreqOffset;  //Difference between the frequency captured by the mic and the tuner goal
     private ProgressBar pitchBar = null;
     AudioDispatcher audioDispatcher;
-    final int PITCH_BAR_MAX = 200;
+    public static final String[] notes = new String[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -69,6 +76,9 @@ public class Tuner extends AppCompatActivity {
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         navView.setSelectedItemId(R.id.navigation_tuner);
+
+        // Initialize pitch variables
+        pitchHistory = new float[PITCH_HISTORY_LENGTH];
 
         // Set pitch bar
         pitchBar = findViewById(R.id.pitchBar);
@@ -124,7 +134,13 @@ public class Tuner extends AppCompatActivity {
                     @Override
                     public void run() {
                         Tuner.this.pitchFreq = pitchInHz;
+                        Tuner.this.pitchHistory[historyIndex] = pitchInHz;
                         Tuner.this.updateDisplay();
+                        historyIndex++;
+                        if(historyIndex == PITCH_HISTORY_LENGTH){
+                            historyIndex = 0;
+                        }
+                        Log.e("run", "pitch[" + historyIndex + "] = " + pitchInHz);
                     }
                 });
             }
@@ -136,28 +152,53 @@ public class Tuner extends AppCompatActivity {
     }
 
     protected void updateDisplay(){
-        int pitchMidi = PitchConverter.hertzToMidiKey(Double.valueOf(this.pitchFreq));
-        String[] notes = new String[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-        this.noteName = notes[pitchMidi%12];
 
+        // Calculate average pitch
+        float sum = 0;
+        for(int i = 0; i < PITCH_HISTORY_LENGTH; i++){
+            if(pitchHistory[i] > PITCH_LOWER_LIMIT){
+                sum += pitchHistory[i];
+            }
+        }
+        avgPitch = sum/(float)PITCH_HISTORY_LENGTH;
+
+        // Calculate standard deviation
+        double sum2 = 0;
+        for(int i = 0; i < PITCH_HISTORY_LENGTH; i++){
+            if(pitchHistory[i] > PITCH_LOWER_LIMIT){
+                sum2 += Math.sqrt(Math.pow(pitchHistory[i] - avgPitch, 2));
+            }
+        }
+        sum2 = Math.sqrt(sum2/(float)PITCH_HISTORY_LENGTH);
+        Log.v("debug", "" + sum2 + ", " + avgPitch);
+
+        // When the std deviation stabilizes, avg pitch is conclusive
+
+        // Calculate note, frequencies and offset
+        int pitchMidi = PitchConverter.hertzToMidiKey(Double.valueOf(avgPitch));
+        if(pitchMidi < 0){
+            // Sometimes this functions returns a negative number unexpectedly
+            pitchMidi = 0;
+        }
+        noteName = notes[pitchMidi%12];
         double noteFreq = PitchConverter.midiKeyToHertz(pitchMidi);
         double noteCent = PitchConverter.hertzToAbsoluteCent(noteFreq);
         double pitchCent = 0;
-        if(this.pitchFreq > 0){
-            pitchCent = PitchConverter.hertzToAbsoluteCent(this.pitchFreq);
+        if(avgPitch > 0){
+            pitchCent = PitchConverter.hertzToAbsoluteCent(avgPitch);
         }
         double offset = noteCent - pitchCent;
 
         // Create strings
         String freqStr, offsetStr;
-        if (this.pitchFreq == -1){
+        if (avgPitch < PITCH_LOWER_LIMIT){
             // Too quiet
             freqStr = "";
             offsetStr = "";
-            this.noteName = "Too quiet";
+            noteName = "Too quiet";
         }
         else{
-            freqStr = String.format(Locale.getDefault(), "%.2f Hz", this.pitchFreq);
+            freqStr = String.format(Locale.getDefault(), "%.2f Hz", avgPitch);
             offsetStr = String.format(Locale.getDefault(),"%.2f", offset);
         }
 
@@ -167,18 +208,21 @@ public class Tuner extends AppCompatActivity {
         // Update note text
         TextView noteText = findViewById(R.id.pitchNote);
         noteText.setText(this.noteName);
-        // Update offset text
-        TextView offsetText = findViewById(R.id.pitchOffset);
-        offsetText.setText(offsetStr);
 
         // Update pitch progress bar
         // -50 < offset < 50
-        int progress = (int)(((50.0+offset)/100.0)*(float) PITCH_BAR_MAX);
+        int progress;
+        if(avgPitch < PITCH_LOWER_LIMIT){
+            progress = 0;
+        }
+        else{
+            progress = (int)(((50.0+offset)/100.0)*(float) PITCH_BAR_MAX);
+        }
         pitchBar.setProgress(progress);
 
         //Update tuner bar
         ProgressBar tunerBar = findViewById(R.id.tunerBar);
-        tunerBar.setProgress((int)this.tunerFreqOffset + 100);
+        tunerBar.setProgress((int)tunerFreqOffset + 100);
 
     }
 
