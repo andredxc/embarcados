@@ -3,6 +3,7 @@ package com.example.togepy;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -19,6 +20,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.w3c.dom.Text;
 
+import java.util.Arrays;
 import java.util.Locale;
 
 import be.tarsos.dsp.AudioDispatcher;
@@ -32,20 +34,23 @@ import be.tarsos.dsp.util.PitchConverter;
 
 public class Tuner extends AppCompatActivity {
 
-    final int PITCH_BAR_MAX = 200;
-    final int PITCH_HISTORY_LENGTH = 20;
+    final float PITCH_BAR_MAX = 200;
+    final int PITCH_HISTORY_LENGTH = 5;
     final int PITCH_LOWER_LIMIT = 10;
+    final double PITCH_OPTIMAL_PCTG = 5;
+    final double PITCH_GOOD_PCTG = 20;
 
     private float pitchFreq = -1;
     private float[] pitchHistory;
     private int historyIndex = 0;
-    private float avgPitch = -1;
+    private double avgPitch = -1;
     private String noteName;
     private int currentStringNum = 6;
     private float tunerFreqOffset;  //Difference between the frequency captured by the mic and the tuner goal
     private ProgressBar pitchBar = null;
     AudioDispatcher audioDispatcher;
     public static final String[] notes = new String[] { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+//    ProgressBar pitchBar;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -82,7 +87,8 @@ public class Tuner extends AppCompatActivity {
 
         // Set pitch bar
         pitchBar = findViewById(R.id.pitchBar);
-        pitchBar.setMax(PITCH_BAR_MAX);
+        pitchBar.setScaleY(3f);
+        pitchBar.setMax((int)PITCH_BAR_MAX);
     }
 
     @Override
@@ -170,17 +176,18 @@ public class Tuner extends AppCompatActivity {
             }
         }
         sum2 = Math.sqrt(sum2/(float)PITCH_HISTORY_LENGTH);
-        Log.v("debug", "" + sum2 + ", " + avgPitch);
+        Log.v("debug", "" + sum2 + ", " + avgPitch + ", " + pitchFreq);
 
-        // When the std deviation stabilizes, avg pitch is conclusive
+
 
         // Calculate note, frequencies and offset
-        int pitchMidi = PitchConverter.hertzToMidiKey(Double.valueOf(avgPitch));
+        int pitchMidi = PitchConverter.hertzToMidiKey(avgPitch);
         if(pitchMidi < 0){
             // Sometimes this functions returns a negative number unexpectedly
             pitchMidi = 0;
         }
         noteName = notes[pitchMidi%12];
+        Log.v("debug", noteName);
         double noteFreq = PitchConverter.midiKeyToHertz(pitchMidi);
         double noteCent = PitchConverter.hertzToAbsoluteCent(noteFreq);
         double pitchCent = 0;
@@ -190,16 +197,14 @@ public class Tuner extends AppCompatActivity {
         double offset = noteCent - pitchCent;
 
         // Create strings
-        String freqStr, offsetStr;
+        String freqStr;
         if (avgPitch < PITCH_LOWER_LIMIT){
             // Too quiet
             freqStr = "";
-            offsetStr = "";
             noteName = "Too quiet";
         }
         else{
             freqStr = String.format(Locale.getDefault(), "%.2f Hz", avgPitch);
-            offsetStr = String.format(Locale.getDefault(),"%.2f", offset);
         }
 
         // Update frequency text
@@ -211,19 +216,38 @@ public class Tuner extends AppCompatActivity {
 
         // Update pitch progress bar
         // -50 < offset < 50
-        int progress;
+        float progress;
         if(avgPitch < PITCH_LOWER_LIMIT){
             progress = 0;
         }
         else{
-            progress = (int)(((50.0+offset)/100.0)*(float) PITCH_BAR_MAX);
+            progress = (int)(((50.0+offset)/100.0)*PITCH_BAR_MAX);
+            // Reflect the progress bar around the middle point
+            progress = (progress < PITCH_BAR_MAX/2) ?
+                    (progress + (PITCH_BAR_MAX/2-progress)*2) : (progress - (progress-PITCH_BAR_MAX/2)*2);
+            Log.e("progress", "" + progress);
+
         }
-        pitchBar.setProgress(progress);
+
+        // Set bar color
+        if(offset >= -PITCH_OPTIMAL_PCTG && offset < PITCH_OPTIMAL_PCTG){
+            pitchBar.getProgressDrawable().setColorFilter(Color.GREEN,
+                    android.graphics.PorterDuff.Mode.SRC_IN);
+        }
+        else if(offset >= -PITCH_GOOD_PCTG && offset < PITCH_GOOD_PCTG){
+            pitchBar.getProgressDrawable().setColorFilter(Color.rgb(230, 230, 0),
+                    android.graphics.PorterDuff.Mode.SRC_IN);
+        }
+        else{
+            pitchBar.getProgressDrawable().setColorFilter(Color.RED,
+                    android.graphics.PorterDuff.Mode.SRC_IN);
+        }
+
+        pitchBar.setProgress((int)progress);
 
         //Update tuner bar
         ProgressBar tunerBar = findViewById(R.id.tunerBar);
         tunerBar.setProgress((int)tunerFreqOffset + 100);
-
     }
 
     public void startTuner(View view){

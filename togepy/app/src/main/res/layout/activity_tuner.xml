@@ -44,6 +44,7 @@
             android:onClick="startTuner"
             />
 
+
         <ProgressBar
             android:id="@+id/tunerBar"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
@@ -88,7 +89,6 @@
                 />
         </RelativeLayout>
 
-
         <TextView
             android:id="@+id/pitchNote"
             android:layout_width="match_parent"
@@ -101,11 +101,42 @@
             android:textColor="@color/note"
             app:layout_constraintBottom_toBottomOf="parent" />
 
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tunerLowText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/tunerLowText"
+                android:textSize="36sp" />
+
+
+            <TextView
+                android:id="@+id/tunerHighText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="7dp"
+                android:layout_marginRight="7dp"
+                android:text="@string/tunerHighText"
+                android:textSize="36sp" />
+        </RelativeLayout>
+
         <ProgressBar
             android:id="@+id/pitchBar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
-            android:layout_height="30dp" />
+            android:layout_height="30dp"
+            android:minHeight="10dp"
+            android:maxHeight="10dp"
+            />
+
 
         <TextView
             android:id="@+id/pitchFreq"

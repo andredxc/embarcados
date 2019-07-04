@@ -24,6 +24,6 @@
     <string name="tunerStartButtonText">START TUNING</string>
     <string name="currentStringDefaultText">Current string</string>
     <string name="tunerOffsetDefaultText">Offset</string>
-    <string name="tunerLowText">low</string>
-    <string name="tunerHighText">high</string>
+    <string name="tunerLowText">♭</string>
+    <string name="tunerHighText">♯</string>
 </resources>
