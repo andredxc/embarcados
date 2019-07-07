@@ -5,7 +5,9 @@ import android.content.Context;
 import android.media.MediaPlayer;
 import android.util.Log;
 import android.widget.TextView;
+import android.net.Uri;
 
+import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -19,7 +21,7 @@ public class Metronome {
     private long _lastTickTime, _tickPeriodMs;
     private Timer _timer;
     private Context _currentContext;
-    private MediaPlayer _mediaPlayer, _accentMediaPlayer;
+    private MediaPlayer _mediaPlayer = null, _accentMediaPlayer = null;
     private TextView _bpmTextView = null;
     private TextView _timeSignatureTopTextView = null;
 
@@ -41,12 +43,27 @@ public class Metronome {
 
             _isRunning = true;
             _currentNote = 1;
-            _mediaPlayer = MediaPlayer.create(context, R.raw.low_seiko_sq50);
-            _accentMediaPlayer = MediaPlayer.create(context, R.raw.high_seiko_sq50);
+            if(_mediaPlayer!=null)
+                _mediaPlayer.release();
+            if(_accentMediaPlayer!=null)
+                _accentMediaPlayer.release();
+            //_mediaPlayer = MediaPlayer.create(context, R.raw.low_seiko_sq50);
+            try{
+                _mediaPlayer = new MediaPlayer();
+                _mediaPlayer.setDataSource(context, Uri.parse("android.resource://com.example.togepy/raw/low_seiko_sq50"));
+                _mediaPlayer.prepare();
+                _accentMediaPlayer = new MediaPlayer();
+                _accentMediaPlayer.setDataSource(context, Uri.parse("android.resource://com.example.togepy/raw/high_seiko_sq50"));
+                _accentMediaPlayer.prepare();
+
+            } catch(Exception e) {
+                Log.e("Metronome", e.toString());
+            }
+            //_accentMediaPlayer = MediaPlayer.create(context, R.raw.high_seiko_sq50);
             _tickPeriodMs =  (long) ((60.0/(float) getBpm())*1000.0);
             _timer = new Timer();
             Log.v("Metronome", "Starting metronome at " + getBpm() + " BPM ( " +
-                    _tickPeriodMs + " miliseconds per beat)");
+                    _tickPeriodMs + " milliseconds per beat)");
 
             _timer.schedule(new TimerTask() {
                 @Override
