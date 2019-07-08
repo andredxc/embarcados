@@ -18,6 +18,7 @@
     <string name="title_tuner">Tuner</string>
     <string name="title_activity_test">TestActivity</string>
     <string name="startingTimeSignature">+</string>
+    <string name="startingTimeSignatureMinus">-</string>
 
     <string name="tunerNoteDefaultText">Note</string>
     <string name="tunerFrequencyDefaultText">Frequency</string>

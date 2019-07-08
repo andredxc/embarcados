@@ -29,6 +29,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/linearLayout"
             app:layout_constraintTop_toTopOf="parent"
+            android:layout_gravity="center"
             app:layout_constraintVertical_bias="1.0" />
 
         <LinearLayout
@@ -41,6 +42,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintVertical_bias="0.498"
+            android:layout_gravity="center"
             android:id="@+id/linearLayout">
 
 
@@ -148,21 +150,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
                 <TextView
                     android:id="@+id/timeSignatureTopTextView"
-                    android:layout_width="wrap_content"
+                    android:layout_width="80dp"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
                     android:text="4/4"
                     android:textSize="93px"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
+                    android:textStyle="bold"
                     app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="1.0" />
                 <TextView
                     android:id="@+id/timeSignatureBottomTextView"
-                    android:layout_width="wrap_content"
+                    android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:textStyle="bold"
                     android:text=" --"
@@ -172,6 +175,27 @@
                     app:layout_constraintBottom_toTopOf="@+id/linearLayout"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="1.0" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/timeSignatureTopMinus"
+                    android:layout_width="90px"
+                    android:layout_height="wrap_content"
+                    android:onClick="changeTimeSignature"
+                    android:textStyle="bold"
+                    android:text="@string/startingTimeSignatureMinus" />
+
+                <Button
+                    android:id="@+id/timeSignatureBottomMinus"
+                    android:layout_width="90px"
+                    android:layout_height="wrap_content"
+                    android:onClick="changeTimeSignature"
+                    android:textStyle="bold"
+                    android:text="@string/startingTimeSignatureMinus" />
             </LinearLayout>
         </LinearLayout>
 

@@ -116,6 +116,22 @@ public class MainActivity extends AppCompatActivity {
                 }
                 _metronome.setTimeSignature2(ts);
                 break;
+            case R.id.timeSignatureTopMinus:
+                ts = _metronome.getTimeSignature1();
+                ts-=1;
+                if (ts < 1){
+                    ts = 20;
+                }
+                _metronome.setTimeSignature1(ts);
+                break;
+            case R.id.timeSignatureBottomMinus:
+                ts = _metronome.getTimeSignature2();
+                ts-=1;
+                if (ts < 0){
+                    ts = 20;
+                }
+                _metronome.setTimeSignature2(ts);
+                break;
             default:
                 Log.e("Internal", "Unrecognized button id");
         }
