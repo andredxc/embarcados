@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         else{
             _metronome.setBpmTextView((TextView) findViewById(R.id.pitchFreq));
             _metronome.setTimeSignatureTopTextView((TextView) findViewById(R.id.timeSignatureTopTextView));
+            _metronome.setTimeSignatureBottomTextView((TextView) findViewById(R.id.timeSignatureBottomTextView));
             _metronome.start(this);
             Button mButton = (Button)findViewById(R.id.activate_metronome);
             mButton.setText(R.string.stop_metronome);
@@ -96,10 +97,11 @@ public class MainActivity extends AppCompatActivity {
     }
     public void changeTimeSignature(View view){
 
+        int ts;
         switch(view.getId()){
 
             case R.id.timeSignatureTop:
-                int ts = _metronome.getTimeSignature1();
+                ts = _metronome.getTimeSignature1();
                 ts+=1;
                 if (ts > 20){
                     ts = 1;
@@ -107,6 +109,12 @@ public class MainActivity extends AppCompatActivity {
                 _metronome.setTimeSignature1(ts);
                 break;
             case R.id.timeSignatureBottom:
+                ts = _metronome.getTimeSignature2();
+                ts+=1;
+                if (ts > 20){
+                    ts = 0;
+                }
+                _metronome.setTimeSignature2(ts);
                 break;
             default:
                 Log.e("Internal", "Unrecognized button id");
